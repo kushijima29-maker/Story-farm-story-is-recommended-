@@ -1,0 +1,224 @@
+#include <stdio.h>
+#include <cs50.h>
+
+int water = 0;
+int electricity = 0;
+int weapon = 0;
+int stamina = 100;
+int alive = 1;
+
+int pick(string f);
+void age(int a, int w);
+int farm(int z);
+int up_or_down(int u);
+int farm2(int r);
+int farm_generator(int f);
+int basement(int b);
+void ending(void);
+
+int main(void)
+{
+    int i = pick("Pick your gamemode:\nOption 1: Farm (Recommended)\nOption 2: Ski resort\n");
+    int a = get_int("Enter your age: ");
+
+    if (i == 1)
+    {
+        age(a, 1);
+
+        int s = pick("First you decide to prepare:\n"
+                     "Option 1: Fill up every container with water\n"
+                     "Option 2: Start the generator for electricity (it's loud)\n");
+
+        farm(s);
+    }
+    else
+    {
+        age(a, 2);
+        up_or_down(1);
+    }
+
+    ending();
+
+    return 0;
+}
+
+int pick(string f)
+{
+    int i;
+
+    do
+    {
+        i = get_int("%s", f);
+    }
+    while (i != 1 && i != 2);
+
+    return i;
+}
+
+void age(int a, int w)
+{
+    if (w == 1)
+    {
+        printf("You are %i years old at a farm when a zombie apocalypse breaks out!\n", a);
+    }
+    else
+    {
+        printf("You are %i years old at a ski resort when a zombie apocalypse breaks out!\n", a);
+    }
+
+    if (a < 18)
+    {
+        printf("(You are young but lack experience.)\n");
+    }
+    else if (a <= 40)
+    {
+        printf("(You are in your prime and can handle most situations.)\n");
+    }
+    else if (a <= 60)
+    {
+        printf("(Some physically demanding tasks are harder.)\n");
+    }
+    else
+    {
+        printf("(You must be careful with your decisions.)\n");
+    }
+
+    if (a <= 40)
+    {
+        stamina = 100;
+    }
+    else if (a <= 60)
+    {
+        stamina = 75;
+    }
+    else
+    {
+        stamina = 50;
+    }
+
+    printf("Your starting stamina is %i.\n", stamina);
+}
+
+int farm(int z)
+{
+    if (z == 1)
+    {
+        printf("You fill every container with water.\n");
+        water += 2;
+        printf("You now have 2L of water.\n");
+        printf("You stay at the farm until help arrives the next morning.\n");
+    }
+    else
+    {
+        printf("You start up the generator for electricity.\n");
+        electricity = 1;
+        farm_generator(1);
+    }
+
+    return z;
+}
+
+int farm_generator(int f)
+{
+    printf("The noise attracts zombies!\n");
+    printf("You hear banging coming from the front door.\n");
+
+    int x = pick("What do you do?\n"
+                 "Option 1: Hide in the basement\n"
+                 "Option 2: Escape through the back door\n");
+
+    if (x == 1)
+    {
+        printf("You run down to the basement and lock the door.\n");
+        farm2(1);
+    }
+    else
+    {
+        printf("You escape through the back door and run toward the woods.\n");
+        stamina -= 20;
+    }
+
+    return x;
+}
+
+int farm2(int r)
+{
+    printf("You search the basement for supplies.\n");
+    printf("You discover a locked storage cabinet.\n");
+    printf("Inside, you find two weapons!\n");
+
+    weapon = pick("Which do you choose?\n"
+                  "Option 1: Shotgun\n"
+                  "Option 2: Rocket launcher\n");
+
+    if (weapon == 1)
+    {
+        printf("You picked up the shotgun.\n");
+    }
+    else
+    {
+        printf("You picked up the rocket launcher.\n");
+    }
+
+    basement(1);
+
+    return weapon;
+}
+
+int basement(int b)
+{
+    printf("\nYou hear something moving upstairs.\n");
+    printf("Zombies have entered the farmhouse!\n");
+
+    if (weapon == 1)
+    {
+        printf("You defend yourself and escape through the basement window.\n");
+        stamina -= 15;
+    }
+    else
+    {
+        printf("The explosion defeats the zombies, but you don't escape.\n");
+        alive = 0;
+    }
+
+    if (stamina <= 0)
+    {
+        alive = 0;
+    }
+
+    return stamina;
+}
+
+int up_or_down(int u)
+{
+    int x = pick("What do you do?\n"
+                 "Option 1: Go down the mountain to your car\n"
+                 "Option 2: Stay at the lodge\n");
+
+    if (x == 1)
+    {
+        printf("Zombies surround your car. You don't make it out.\n");
+        alive = 0;
+    }
+    else
+    {
+        printf("You stay inside the lodge and wait for help.\n");
+        printf("A rescue team arrives the next morning!\n");
+    }
+
+    return x;
+}
+
+void ending(void)
+{
+    if (alive == 0 || stamina <= 0)
+    {
+        printf("\nYOU DIED!\n");
+        printf("You did not survive the zombie apocalypse.\n");
+    }
+    else
+    {
+        printf("\nYOU SURVIVED!\n");
+        printf("You managed to survive the zombie apocalypse!\n");
+    }
+}
